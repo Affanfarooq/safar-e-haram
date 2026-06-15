@@ -2,23 +2,25 @@
 
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { HERO_VIDEO, WHATSAPP_URL } from "@/lib/constants";
+import { HERO_IMAGE, HERO_VIDEO, WHATSAPP_URL } from "@/lib/constants";
 import BackgroundVideo from "@/components/ui/BackgroundVideo";
 import Reveal from "@/components/ui/Reveal";
 import MagneticButton from "@/components/ui/MagneticButton";
+import { useLightMotion } from "@/hooks/usePrefersReducedMotion";
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const [videoError, setVideoError] = useState(false);
+  const lightMotion = useLightMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], lightMotion ? [1, 1] : [1, 1.05]);
+  const imageY = useTransform(scrollYProgress, [0, 1], lightMotion ? ["0%", "0%"] : ["0%", "8%"]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 0.6], [0, -80]);
+  const contentY = useTransform(scrollYProgress, [0, 0.6], lightMotion ? [0, -20] : [0, -80]);
 
   return (
     <section ref={ref} id="home" className="relative h-[100svh] min-h-[560px] overflow-hidden bg-[#021a14] md:min-h-[640px] lg:min-h-[700px]">
@@ -26,6 +28,7 @@ export default function Hero() {
         {!videoError ? (
           <BackgroundVideo
             src={HERO_VIDEO}
+            poster={HERO_IMAGE}
             ariaLabel="Safar-e-Haram.pk — Umrah journey in Makkah"
             priority
             onError={() => setVideoError(true)}

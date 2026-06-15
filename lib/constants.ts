@@ -11,6 +11,7 @@ export const ASSETS = {
   flight: "/assets/flight.jpg",
   rates: "/assets/rates.jpg",
   clocktower: "/assets/clocktower.mp4",
+  clocktowerPoster: "/assets/journey1.jpg",
   madina: "/assets/madina.jpg",
 } as const;
 
@@ -23,6 +24,7 @@ export const PROMISE_IMAGE = ASSETS.promise;
 export const SACRED_CITIES = {
   makkah: {
     src: ASSETS.clocktower,
+    poster: ASSETS.clocktowerPoster,
     media: "video" as const,
     label: "Makkah",
     title: "Clock Tower",

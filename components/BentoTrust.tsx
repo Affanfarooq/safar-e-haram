@@ -31,6 +31,7 @@ import {
   ScrollSpinProvider,
   useScrollSpin,
 } from "@/hooks/useScrollSpin";
+import { useLightMotion } from "@/hooks/usePrefersReducedMotion";
 
 /** All trust-section loop speeds — higher = slower */
 const ANIM = {
@@ -630,15 +631,16 @@ const PROMISE_COPY =
 
 function OurPromiseSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const lightMotion = useLightMotion();
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
 
-  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], lightMotion ? [1, 1] : [1, 1.05]);
+  const bgY = useTransform(scrollYProgress, [0, 1], lightMotion ? ["0%", "0%"] : ["0%", "8%"]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0, 0.6], [0, -40]);
+  const contentY = useTransform(scrollYProgress, [0, 0.6], lightMotion ? [0, -20] : [0, -40]);
 
   return (
     <div
@@ -649,6 +651,7 @@ function OurPromiseSection() {
         <motion.div style={{ scale: bgScale, y: bgY }} className="absolute inset-0">
           <BackgroundVideo
             src={PROMISE_VIDEO}
+            poster={PROMISE_IMAGE}
             ariaLabel="Umrah journey — our promise to you"
           />
         </motion.div>

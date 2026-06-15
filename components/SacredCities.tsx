@@ -29,6 +29,7 @@ function CityCard({
       {city.media === "video" ? (
         <BackgroundVideo
           src={city.src}
+          poster={city.poster}
           ariaLabel={city.alt}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
         />
