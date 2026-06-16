@@ -40,7 +40,6 @@ export default function RootLayout({
           rel="preload"
           href={HERO_IMAGE}
           as="image"
-          // @ts-expect-error fetchpriority is valid on link in modern browsers
           fetchPriority="high"
         />
         <link
