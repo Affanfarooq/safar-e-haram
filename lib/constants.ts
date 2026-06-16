@@ -3,8 +3,8 @@ export const WHATSAPP_DISPLAY = "+92 343 257 4831";
 
 export const ASSETS = {
   logo: "/assets/logo.png",
-  hero: "/assets/banner.png",
-  heroVideo: "/assets/makkah1.mp4",
+  hero: "/assets/banner.jpg",
+  heroVideo: "/assets/banner.mp4",
   promiseVideo: "/assets/makkah2.mp4",
   promise: "/assets/journey2.jpg",
   visa: "/assets/visa.jpg",

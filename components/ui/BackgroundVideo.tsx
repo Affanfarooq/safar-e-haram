@@ -21,23 +21,31 @@ export default function BackgroundVideo({
 }: BackgroundVideoProps) {
   const ref = useRef<HTMLVideoElement>(null);
   const [activeSrc, setActiveSrc] = useState<string | null>(priority ? src : null);
-  const [playing, setPlaying] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
 
-    setPlaying(false);
+    setReady(false);
 
-    const onPlaying = () => setPlaying(true);
-    video.addEventListener("playing", onPlaying, { once: true });
+    const markReady = () => setReady(true);
+    const tryPlay = () => void video.play().catch(() => {});
+
+    video.addEventListener("loadeddata", markReady, { once: true });
+    video.addEventListener("canplay", markReady, { once: true });
+    video.addEventListener("playing", markReady, { once: true });
+
+    if (priority) {
+      tryPlay();
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setActiveSrc((current) => current ?? src);
-          void video.play().catch(() => {});
-        } else {
+          tryPlay();
+        } else if (!priority) {
           video.pause();
         }
       },
@@ -47,7 +55,9 @@ export default function BackgroundVideo({
     observer.observe(video);
 
     return () => {
-      video.removeEventListener("playing", onPlaying);
+      video.removeEventListener("loadeddata", markReady);
+      video.removeEventListener("canplay", markReady);
+      video.removeEventListener("playing", markReady);
       observer.disconnect();
     };
   }, [src, priority]);
@@ -56,7 +66,12 @@ export default function BackgroundVideo({
     const video = ref.current;
     if (!video || !activeSrc) return;
     video.load();
-  }, [activeSrc]);
+    if (priority) {
+      void video.play().catch(() => {});
+    }
+  }, [activeSrc, priority]);
+
+  const fadeMs = priority ? "duration-300" : "duration-700";
 
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#021a14]">
@@ -67,14 +82,17 @@ export default function BackgroundVideo({
           alt=""
           aria-hidden
           decoding="async"
-          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${
-            playing ? "pointer-events-none opacity-0" : "opacity-100"
+          fetchPriority={priority ? "high" : "auto"}
+          loading={priority ? "eager" : "lazy"}
+          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity ${fadeMs} ${
+            ready ? "pointer-events-none opacity-0" : "opacity-100"
           }`}
         />
       ) : null}
       <video
         ref={ref}
         src={activeSrc ?? undefined}
+        poster={poster}
         autoPlay
         muted
         loop
@@ -82,8 +100,8 @@ export default function BackgroundVideo({
         preload={priority ? "auto" : "none"}
         aria-label={ariaLabel}
         onError={onError}
-        className={`${className} transition-opacity duration-700 ${
-          playing ? "opacity-100" : "opacity-0"
+        className={`${className} transition-opacity ${fadeMs} ${
+          ready ? "opacity-100" : "opacity-0"
         }`}
       />
     </div>

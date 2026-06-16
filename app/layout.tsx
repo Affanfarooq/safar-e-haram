@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
-import { HERO_IMAGE } from "@/lib/constants";
+import { HERO_IMAGE, HERO_VIDEO } from "@/lib/constants";
 import MotionProvider from "@/components/MotionProvider";
 import "./globals.css";
 const inter = Inter({
@@ -36,7 +36,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="preload" href={HERO_IMAGE} as="image" />
+        <link
+          rel="preload"
+          href={HERO_IMAGE}
+          as="image"
+          // @ts-expect-error fetchpriority is valid on link in modern browsers
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          href={HERO_VIDEO}
+          as="video"
+          type="video/mp4"
+        />
       </head>
       <body
         className={`${inter.variable} ${poppins.variable} site-spiritual-texture min-w-0 overflow-x-hidden font-sans antialiased leading-relaxed tracking-wide`}
